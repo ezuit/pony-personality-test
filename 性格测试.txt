@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>小马宝莉 · 小南娘性格分类测评 | 36题深度版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f9eef5 0%, #ffe0f0 100%);
+            font-family: 'Comic Neue', 'Comic Neue', 'Segoe UI', 'Comic Sans MS', 'Chalkboard SE', 'Poppins', cursive, sans-serif;
+            padding: 30px 20px;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 小马宝莉风格背景 SVG 装饰 */
+        .pony-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .bg-pony {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            opacity: 0.15;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
+        }
+        .rainbow-bg {
+            position: absolute;
+            height: 15px;
+            border-radius: 20px;
+            opacity: 0.2;
+        }
+
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgba(255, 252, 245, 0.94);
+            backdrop-filter: blur(12px);
+            border-radius: 64px 48px 64px 48px;
+            box-shadow: 0 25px 45px rgba(192, 112, 148, 0.25), 0 0 0 3px #ffe0f0, 0 0 0 8px #ffc0dd;
+            padding: 30px 28px 45px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* 时效过期遮罩 */
+        .expired-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .expired-card {
+            background: #ffecf0;
+            color: #b34b6e;
+            padding: 40px 30px;
+            border-radius: 60px;
+            max-width: 90%;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.3);
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .pony-icon {
+            width: 60px;
+            height: 60px;
+            display: inline-block;
+        }
+        h1 {
+            font-size: 1.9rem;
+            background: linear-gradient(135deg, #e06c9e, #ffac7a, #ffda7a);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            padding: 0 8px;
+        }
+        .sub {
+            background: #ffecf0;
+            display: inline-block;
+            padding: 6px 20px;
+            border-radius: 60px;
+            color: #b34b6e;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+        .desc {
+            text-align: center;
+            margin: 20px 0 12px;
+            color: #ad6a86;
+            background: #fff0f5cc;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+        }
+
+        .progress-area {
+            margin: 10px 0 20px;
+            background: #ffdfe9;
+            border-radius: 60px;
+            padding: 5px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .progress-text {
+            font-weight: bold;
+            color: #b34b6e;
+            background: white;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+        }
+        .progress-bar-bg {
+            flex: 1;
+            height: 10px;
+            background: #ffc0d0;
+            border-radius: 30px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #f8a5c2, #f2628c);
+            border-radius: 30px;
+            transition: width 0.2s ease;
+        }
+
+        .question-card {
+            background: #fffafc;
+            border-radius: 48px;
+            padding: 28px 24px;
+            margin: 20px 0;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .q-num-large {
+            background: #ffb7cf;
+            width: 44px;
+            height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+        }
+        .q-text-large {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: #673147;
+            margin: 20px 0;
+            line-height: 1.4;
+        }
+        .scale-row-vertical {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 30px 0;
+        }
+        .scale-option {
+            background: #fef3f7;
+            border-radius: 60px;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: 0.1s;
+            border: 1px solid #fbc4d7;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #ad5e7e;
+            text-align: center;
+        }
+        .scale-option.selected {
+            background: #e99ebc;
+            border-color: #c04e76;
+            color: white;
+            box-shadow: 0 4px 8px #d97e9f80;
+            transform: scale(0.98);
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            margin: 20px 0;
+        }
+        .btn {
+            border: none;
+            background: #ffe3ed;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 48px;
+            color: #b94b72;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 3px 0 #d99eb9;
+            font-family: inherit;
+            flex: 1;
+        }
+        .btn-primary {
+            background: #f29fbf;
+            color: white;
+            box-shadow: 0 3px 0 #b64f74;
+        }
+        .btn-primary:active, .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #d99eb9;
+        }
+        .result-card {
+            background: #fff2f7dd;
+            border-radius: 48px;
+            padding: 24px;
+            margin-top: 20px;
+            border: 2px solid #ffcce0;
+        }
+        .result-title {
+            font-size: 1.7rem;
+            font-weight: bold;
+            color: #b53f6a;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .result-badge {
+            background: #ffb7cf;
+            border-radius: 40px;
+            padding: 4px 16px;
+            font-size: 0.9rem;
+            color: white;
+        }
+        .character-img {
+            width: 80px;
+            height: 80px;
+            background: #ffe0ec;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+        .attr-section {
+            background: #fff0f5;
+            border-radius: 32px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        .notice-box {
+            background: #fff0e0;
+            border-left: 6px solid #e99ebc;
+            border-radius: 28px;
+            padding: 14px 18px;
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #a55672;
+        }
+        .disclaimer {
+            font-size: 0.75rem;
+            text-align: center;
+            margin-top: 20px;
+            color: #c78aa8;
+        }
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            margin-top: 20px;
+            color: #e6a6c0;
+        }
+        @media (max-width: 600px) {
+            .test-container { padding: 20px 18px; }
+            .q-text-large { font-size: 1.1rem; }
+            .scale-option { padding: 12px; font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="pony-bg" id="ponyBg"></div>
+<div class="test-container" id="appContainer">
+    <div class="hero">
+        <svg class="pony-icon" viewBox="0 0 100 100" fill="none">
+            <circle cx="50" cy="50" r="45" fill="#FFB6C1" stroke="#D87093" stroke-width="2"/>
+            <ellipse cx="35" cy="45" rx="6" ry="8" fill="white"/>
+            <ellipse cx="65" cy="45" rx="6" ry="8" fill="white"/>
+            <circle cx="37" cy="47" r="3" fill="#4B0082"/>
+            <circle cx="63" cy="47" r="3" fill="#4B0082"/>
+            <path d="M45 60 Q50 68 55 60" stroke="#8B4513" stroke-width="3" fill="none"/>
+            <path d="M30 25 L40 30 L35 20 Z" fill="#FF69B4"/>
+            <path d="M70 25 L60 30 L65 20 Z" fill="#FF69B4"/>
+        </svg>
+        <h1>小南娘性格分类测评</h1>
+        <svg class="pony-icon" viewBox="0 0 100 100" fill="none">
+            <circle cx="50" cy="50" r="45" fill="#E6E6FA" stroke="#9370DB" stroke-width="2"/>
+            <ellipse cx="35" cy="45" rx="6" ry="8" fill="white"/>
+            <ellipse cx="65" cy="45" rx="6" ry="8" fill="white"/>
+            <circle cx="37" cy="47" r="3" fill="#4B0082"/>
+            <circle cx="63" cy="47" r="3" fill="#4B0082"/>
+            <path d="M45 60 Q50 68 55 60" stroke="#8B4513" stroke-width="3" fill="none"/>
+            <path d="M50 20 L55 35 L45 35 Z" fill="#FFD700"/>
+        </svg>
+    </div>
+    <div class="sub">测测你是哪种小南娘 · 36题深度版</div>
+    <div class="desc">💖 专业性格模型 + 二次元对照 + 吸引力分析 💖<br>请根据真实感受选择，答案没有对错。</div>
+
+    <div class="progress-area">
+        <span class="progress-text" id="qCounter">第1 / 36题</span>
+        <div class="progress-bar-bg"><div class="progress-fill" id="progressFill"></div></div>
+        <span class="progress-text" id="answeredCount">已答 0 / 36</span>
+    </div>
+
+    <div id="questionCard" class="question-card"></div>
+
+    <div class="nav-buttons">
+        <button class="btn" id="prevBtn" disabled>🐴 上一题</button>
+        <button class="btn btn-primary" id="nextBtn">下一题 🌟</button>
+    </div>
+    <div style="text-align: center; margin-top: 10px;">
+        <button class="btn" id="resetBtn" style="background:#ffe3ed;">🦄 重选所有答案</button>
+    </div>
+
+    <div id="resultArea" class="result-card" style="display: none;"></div>
+    <div class="disclaimer">⚡ 本测试结果基于自我报告，仅供娱乐与自我探索，不构成专业诊断。</div>
+    <footer>💖 献给所有独一无二的小南娘 💖</footer>
+</div>
+
+<script>
+    // ======================= 24小时时效性 =======================
+    const STORAGE_KEY = 'nan_niang_test_start';
+    const EXPIRY_HOURS = 24;
+    function isTestExpired() {
+        const start = localStorage.getItem(STORAGE_KEY);
+        if (!start) { localStorage.setItem(STORAGE_KEY, Date.now()); return false; }
+        return (Date.now() - parseInt(start)) >= EXPIRY_HOURS * 3600000;
+    }
+    function showExpired() {
+        const div = document.createElement('div');
+        div.className = 'expired-overlay';
+        div.innerHTML = `<div class="expired-card">🌸 测评链接已过期 🌸<br>本测评仅在首次访问后24小时内有效。<br><button onclick="location.reload()">重新加载</button></div>`;
+        document.body.appendChild(div);
+        document.getElementById('appContainer').style.filter = 'blur(4px)';
+        document.getElementById('appContainer').style.pointerEvents = 'none';
+    }
+
+    // ======================= 6种性格类型定义 =======================
+    const TYPES = {
+        sweet: {
+            name: "🍬 甜美小公主型 · 鹿目圆香 (魔法少女小圆)",
+            desc: "你就像圆神一样，内心柔软、善良纯粹，总是不自觉地治愈他人。喜欢可爱的一切，撒娇是你的天赋，但也容易为了别人委屈自己。",
+            attract: "你会被温柔坚定、能给你安全感的人吸引，他们像晓美焰一样默默守护你。",
+            attractedBy: "你天然的无害感和纯真笑容会吸引那些内心孤独、渴望温暖的人，尤其是母性情怀较强的伙伴。"
+        },
+        charming: {
+            name: "💋 魅惑御姐型 · 峰不二子 (鲁邦三世)",
+            desc: "你拥有成熟的魅力与神秘感，懂得利用自己的优势，独立又性感。不轻易动心，但一旦认定就非常专情。",
+            attract: "你欣赏聪明、有实力、不黏人且能与你棋逢对手的人，像鲁邦那样风趣又强大的类型。",
+            attractedBy: "你的自信和风情会吸引那些慕强且喜欢挑战的人，也容易让年下者崇拜。"
+        },
+        natural: {
+            name: "🍃 天然呆萌型 · 木之本樱 (魔卡少女樱)",
+            desc: "你天真烂漫，常常无意中做出可爱举动，对世界充满好奇。有时候迷糊但运气超好，是团队里的开心果。",
+            attract: "你容易被成熟稳重、能帮你“善后”的人吸引，比如李小狼那种外冷内热的类型。",
+            attractedBy: "你的纯真和不设防会激发他人的保护欲，吸引控制欲或责任感强的人。"
+        },
+        tsundere: {
+            name: "🔥 傲娇别扭型 · 明日香 (EVA)",
+            desc: "你嘴上倔强，内心却极度渴望被爱。用高冷武装自己，其实比谁都害怕受伤。关键时刻却非常可靠。",
+            attract: "你会被包容你、能看穿你伪装的人吸引，像加持良治那样温柔成熟的大人。",
+            attractedBy: "你的反差萌和隐藏的脆弱会吸引喜欢“驯服”挑战的人，以及真正懂你的治愈系。"
+        },
+        gentle: {
+            name: "🌸 温柔治愈型 · 柔柔 (小马宝莉)",
+            desc: "你轻声细语，善解人意，是绝佳的倾听者。喜欢小动物和自然，总是默默照顾周围人的情绪。",
+            attract: "你会被开朗有主见、能带你走出舒适圈的人吸引，像云宝黛西那样活力四射的类型。",
+            attractedBy: "你的温和与包容会吸引情绪不稳定或缺乏安全感的人，也容易成为大家的“树洞”。"
+        },
+        mystic: {
+            name: "🌙 神秘高冷型 · 绫波丽 (EVA)",
+            desc: "你话少但内心丰富，自带疏离感，其实只是不善于表达。拥有独特的审美和思考方式，像一座冰山下的火山。",
+            attract: "你会被热情直率、能打破你心墙的人吸引，像碇真嗣那样笨拙但真诚的人。",
+            attractedBy: "你的神秘感和距离感会吸引好奇心旺盛的人，以及喜欢“攻略”高冷角色的玩家。"
+        }
+    };
+
+    // 维度 key 映射
+    const DIMENSION_KEYS = ['sweet', 'charming', 'natural', 'tsundere', 'gentle', 'mystic'];
+
+    // ======================= 36个专业生活化问题 (每个问题对应一个主要维度) =======================
+    const questionsData = [
+        { text: "看到可爱的玩偶或裙子，我会忍不住想要拥有并拍照炫耀。", dim: "sweet" },
+        { text: "在人群中，我喜欢成为焦点，并且会主动用幽默或魅力吸引注意。", dim: "charming" },
+        { text: "我经常丢三落四，朋友说我像个小迷糊。", dim: "natural" },
+        { text: "明明心里很喜欢对方，嘴上却偏要说反话，事后又后悔。", dim: "tsundere" },
+        { text: "朋友难过时，我总是第一个递上纸巾和拥抱的人。", dim: "gentle" },
+        { text: "我不喜欢社交，更享受一个人静静看书或听音乐。", dim: "mystic" },
+        { text: "我幻想过穿洛丽塔或JK制服走在街上，并且不怕别人目光。", dim: "sweet" },
+        { text: "我觉得性感比可爱更有吸引力，会尝试成熟妆容。", dim: "charming" },
+        { text: "我常常因为太天真而被人骗，但依然相信世界美好。", dim: "natural" },
+        { text: "我生气时会冷战，其实只是希望对方来哄我。", dim: "tsundere" },
+        { text: "我很容易共情，看剧哭得比主角还惨。", dim: "gentle" },
+        { text: "我不喜欢解释自己，懂我的人自然懂。", dim: "mystic" },
+        { text: "我特别喜欢粉色、蕾丝、蝴蝶结等少女元素。", dim: "sweet" },
+        { text: "我善于用眼神和肢体语言撩人，不用说话就能吸引目光。", dim: "charming" },
+        { text: "我经常走神发呆，被朋友说“在另一个次元”。", dim: "natural" },
+        { text: "我很难开口说“喜欢”，宁愿用行动默默付出。", dim: "tsundere" },
+        { text: "我宁愿自己受委屈也不愿伤害别人。", dim: "gentle" },
+        { text: "我的表情很少，常被误认为高冷或生气。", dim: "mystic" },
+        { text: "我喜欢甜食、童话、浪漫爱情故事。", dim: "sweet" },
+        { text: "我享受被异性或同性追捧的感觉，但不会轻易动心。", dim: "charming" },
+        { text: "我有时会做出奇怪的举动，自己都没意识到。", dim: "natural" },
+        { text: "我极度要强，最讨厌被人看不起。", dim: "tsundere" },
+        { text: "我会为了照顾别人的感受而隐藏自己的情绪。", dim: "gentle" },
+        { text: "我的爱好很小众，不喜欢随大流。", dim: "mystic" },
+        { text: "我希望被当作“小公主”一样宠爱。", dim: "sweet" },
+        { text: "我觉得自己的魅力在于成熟和阅历。", dim: "charming" },
+        { text: "我经常因为太善良而被利用。", dim: "natural" },
+        { text: "我有时候会用攻击性语言保护自己脆弱的心。", dim: "tsundere" },
+        { text: "我喜欢做志愿者或者帮助小动物。", dim: "gentle" },
+        { text: "我的朋友圈很少，但每个都是深交。", dim: "mystic" },
+        { text: "我会为了可爱的东西花掉半个月工资。", dim: "sweet" },
+        { text: "我懂得如何打扮让自己更有女人味。", dim: "charming" },
+        { text: "我经常迷路，分不清东南西北。", dim: "natural" },
+        { text: "我嘴硬心软，常常说完狠话就后悔。", dim: "tsundere" },
+        { text: "我很容易被悲伤的故事感染，久久走不出来。", dim: "gentle" },
+        { text: "我觉得自己像一只猫，独立又神秘。", dim: "mystic" }
+    ];
+
+    // 存储答案 (1-5)
+    let userAnswers = new Array(36).fill(null);
+    let currentIndex = 0;
+
+    // DOM
+    const container = document.getElementById('appContainer');
+    const questionCardDiv = document.getElementById('questionCard');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const resultDiv = document.getElementById('resultArea');
+    const qCounterSpan = document.getElementById('qCounter');
+    const answeredSpan = document.getElementById('answeredCount');
+    const progressFill = document.getElementById('progressFill');
+
+    function updateProgress() {
+        const answered = userAnswers.filter(a => a !== null).length;
+        const percent = (answered / 36) * 100;
+        progressFill.style.width = percent + '%';
+        answeredSpan.innerText = `已答 ${answered} / 36`;
+        qCounterSpan.innerText = `第${currentIndex+1} / 36题`;
+    }
+
+    function renderCurrent() {
+        const q = questionsData[currentIndex];
+        const currentVal = userAnswers[currentIndex];
+        let optsHtml = '';
+        const labels = ['1 完全不是', '2 不太符合', '3 有点符合', '4 比较符合', '5 完全符合'];
+        for (let i = 1; i <= 5; i++) {
+            const selected = (currentVal === i) ? 'selected' : '';
+            optsHtml += `<div class="scale-option ${selected}" data-val="${i}">${labels[i-1]}</div>`;
+        }
+        const html = `
+            <div style="text-align:center;">
+                <div class="q-num-large">${currentIndex+1}</div>
+                <div class="q-text-large">${q.text}</div>
+                <div class="scale-row-vertical" id="optContainer">${optsHtml}</div>
+            </div>
+        `;
+        questionCardDiv.innerHTML = html;
+        // 绑定选项事件
+        document.querySelectorAll('.scale-option').forEach(opt => {
+            opt.addEventListener('click', (e) => {
+                const val = parseInt(opt.dataset.val);
+                if (isNaN(val)) return;
+                userAnswers[currentIndex] = val;
+                // 更新UI选中
+                document.querySelectorAll('.scale-option').forEach(el => el.classList.remove('selected'));
+                opt.classList.add('selected');
+                updateProgress();
+                // 自动跳转（如果不是最后一题且已选）
+                if (currentIndex < 35) {
+                    goToNext();
+                } else {
+                    updateNextButtonText();
+                }
+            });
+        });
+        updateNextButtonText();
+        prevBtn.disabled = (currentIndex === 0);
+    }
+
+    function updateNextButtonText() {
+        if (currentIndex === 35) {
+            nextBtn.innerText = '✨ 完成并查看结果';
+        } else {
+            nextBtn.innerText = '下一题 🌟';
+        }
+    }
+
+    function goToPrev() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            renderCurrent();
+            updateProgress();
+        }
+    }
+
+    function goToNext() {
+        if (userAnswers[currentIndex] === null) {
+            alert('🌸 请先选择答案再继续下一题哟～');
+            return;
+        }
+        if (currentIndex === 35) {
+            computeResult();
+            return;
+        }
+        currentIndex++;
+        renderCurrent();
+        updateProgress();
+    }
+
+    function resetAll() {
+        if (confirm('确定要重置所有答案吗？进度将会丢失。')) {
+            userAnswers.fill(null);
+            currentIndex = 0;
+            resultDiv.style.display = 'none';
+            resultDiv.innerHTML = '';
+            renderCurrent();
+            updateProgress();
+        }
+    }
+
+    // 计算各维度总分并确定类型
+    function computeResult() {
+        // 检查完整性
+        for (let i = 0; i < 36; i++) {
+            if (userAnswers[i] === null) {
+                alert(`还有第${i+1}题未回答，请返回完成~`);
+                currentIndex = i;
+                renderCurrent();
+                updateProgress();
+                return;
+            }
+        }
+        // 累加维度分数
+        let scores = { sweet:0, charming:0, natural:0, tsundere:0, gentle:0, mystic:0 };
+        for (let i = 0; i < 36; i++) {
+            const dim = questionsData[i].dim;
+            scores[dim] += userAnswers[i];
+        }
+        // 找出最高分维度
+        let maxDim = null, maxScore = -1;
+        for (let d of DIMENSION_KEYS) {
+            if (scores[d] > maxScore) {
+                maxScore = scores[d];
+                maxDim = d;
+            }
+        }
+        const typeKey = maxDim;
+        const typeInfo = TYPES[typeKey];
+        // 总分范围 36~180，显示参考
+        const totalScore = userAnswers.reduce((a,b)=>a+b,0);
+        const percentage = Math.round((totalScore / 180) * 100);
+        // 额外生成对应人物图标（文字代替）
+        const characterMap = {
+            sweet: "🎀 鹿目圆香",
+            charming: "💋 峰不二子",
+            natural: "🍃 木之本樱",
+            tsundere: "⚡ 明日香",
+            gentle: "🦋 柔柔",
+            mystic: "🌙 绫波丽"
+        };
+        const resultHtml = `
+            <div class="result-title">
+                <span class="character-img">${typeKey==='sweet'?'🎀':typeKey==='charming'?'💋':typeKey==='natural'?'🍃':typeKey==='tsundere'?'⚡':typeKey==='gentle'?'🦋':'🌙'}</span>
+                ${typeInfo.name}
+            </div>
+            <div class="spectrum" style="background:#ffdee9; padding:12px; border-radius:32px; margin:12px 0;">
+                🌈 小南娘综合指数：${totalScore} / 180 &nbsp; | &nbsp; ${percentage}% 纯度
+            </div>
+            <div class="attr-section">
+                <strong>✨ 性格解析</strong><br>${typeInfo.desc}
+            </div>
+            <div class="attr-section">
+                <strong>💞 你会被什么样的人吸引？</strong><br>${typeInfo.attract}
+            </div>
+            <div class="attr-section">
+                <strong>🌟 你会吸引什么样的人？</strong><br>${typeInfo.attractedBy}
+            </div>
+            <div class="attr-section">
+                <strong>🎭 对照人物</strong><br>${characterMap[typeKey]}  (来自二次元的镜像)
+            </div>
+            <div class="notice-box">
+                <p><strong>📌 注：</strong>结果解析内容仅供参考，不能作为就医或证明类凭证。</p>
+                <p><strong>💝 温馨提醒</strong><br>
+                ① 本测试为虚拟服务内容，购买成功后不可退换；<br>
+                ② 测试可重复购买，每次付费仅允许测试一次；<br>
+                ③ 结果仅供娱乐，请接纳真实的自己。</p>
+            </div>
+        `;
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = resultHtml;
+        resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // 生成可爱背景（小马剪影+彩虹）
+    function generateBackground() {
+        const bgDiv = document.getElementById('ponyBg');
+        if (!bgDiv) return;
+        bgDiv.innerHTML = '';
+        const ponyColors = ['#FFB6C1', '#E6E6FA', '#C0F0E8', '#FFFACD', '#FFDAB9'];
+        for (let i = 0; i < 14; i++) {
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svg.setAttribute("viewBox", "0 0 100 100");
+            svg.setAttribute("class", "bg-pony");
+            svg.style.left = Math.random() * 100 + '%';
+            svg.style.top = Math.random() * 100 + '%';
+            svg.style.width = (45 + Math.random() * 60) + 'px';
+            svg.style.height = (45 + Math.random() * 60) + 'px';
+            svg.style.opacity = 0.12;
+            svg.innerHTML = `<circle cx="50" cy="50" r="45" fill="${ponyColors[i%ponyColors.length]}" stroke="#D87093" stroke-width="2"/>
+                <ellipse cx="35" cy="45" rx="6" ry="8" fill="white"/><ellipse cx="65" cy="45" rx="6" ry="8" fill="white"/>
+                <circle cx="37" cy="47" r="3" fill="#4B0082"/><circle cx="63" cy="47" r="3" fill="#4B0082"/>
+                <path d="M45 60 Q50 68 55 60" stroke="#8B4513" stroke-width="3" fill="none"/>`;
+            bgDiv.appendChild(svg);
+        }
+        // 彩虹装饰
+        for (let i=0;i<5;i++) {
+            const rainbow = document.createElement('div');
+            rainbow.className = 'rainbow-bg';
+            rainbow.style.width = 120 + Math.random() * 200 + 'px';
+            rainbow.style.height = '12px';
+            rainbow.style.background = 'linear-gradient(90deg, #ff77aa, #ffaa77, #ffff77, #77ff77, #77aaff)';
+            rainbow.style.left = Math.random() * 90 + '%';
+            rainbow.style.top = Math.random() * 90 + '%';
+            rainbow.style.borderRadius = '20px';
+            bgDiv.appendChild(rainbow);
+        }
+    }
+
+    // 初始化
+    function init() {
+        if (isTestExpired()) {
+            showExpired();
+            return;
+        }
+        generateBackground();
+        renderCurrent();
+        updateProgress();
+        prevBtn.addEventListener('click', goToPrev);
+        nextBtn.addEventListener('click', goToNext);
+        resetBtn.addEventListener('click', resetAll);
+    }
+    init();
+</script>
+</body>
+</html>
+```
